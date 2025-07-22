@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Ana, bora pizza?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #ffe259 0%, #ffa751 100%);
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Fredoka One', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .container {
+      background: #fff8e7cc;
+      border-radius: 2.2rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.11);
+      padding: 2.2rem 2.3rem 2.4rem 2.3rem;
+      text-align: center;
+      max-width: 340px;
+      z-index: 1;
+    }
+    h1 {
+      color: #f85900;
+      font-size: 2.1rem;
+      margin-bottom: 1.5rem;
+    }
+    .pizza-emoji {
+      font-size: 2.7rem;
+      margin-bottom: 0.8rem;
+    }
+    .buttons {
+      margin-top: 2rem;
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      height: 60px;
+    }
+    button {
+      font-family: inherit;
+      font-size: 1.1rem;
+      padding: 0.8rem 2.2rem;
+      border-radius: 1.5rem;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      outline: none;
+      box-shadow: 0 2px 9px rgba(248,89,0,0.13);
+      transition: background 0.2s, color 0.2s, transform 0.13s;
+      background: #ffcc29;
+      color: #f85900;
+      z-index: 2;
+      position: relative;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+    #noBtn {
+      position: fixed;
+      left: 50%;
+      top: 57%;
+      background: #e63946;
+      color: #fff;
+      transition: left 0.19s, top 0.19s, background 0.18s;
+      z-index: 1000;
+      min-width: 130px;
+    }
+    #yesBtn {
+      background: #388e3c;
+      color: #fff;
+    }
+    @media (max-width: 600px) {
+      .container { padding: 1rem 0.1rem; }
+      .buttons { gap: 1.1rem; }
+      button { font-size: 0.98rem; padding: 0.74rem 1.2rem;}
+      #noBtn, #yesBtn { min-width: 98px;}
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="pizza-emoji">🍕😏</div>
+    <h1>Ana, bora comer pizza comigo?</h1>
+    <div class="buttons">
+      <button id="yesBtn">Sim! 😍</button>
+    </div>
+  </div>
+  <button id="noBtn">Não, tô de dieta 😅</button>
+  <script>
+    // Para WhatsApp
+    document.getElementById('yesBtn').onclick = function(){
+      window.open('https://wa.me/5592981340308?text=Oi%20Ana!%20Eu%20quero%20pizza%20com%20você%20%F0%9F%8D%95', '_blank');
+    };
+
+    // Botão NÃO foge!
+    const noBtn = document.getElementById('noBtn');
+    let noBtnClicks = 0;
+
+    function randomPosition() {
+      const btnWidth = noBtn.offsetWidth;
+      const btnHeight = noBtn.offsetHeight;
+      const padding = 20; // margem para não colar na borda
+      const windowWidth = window.innerWidth;
+      const windowHeight = window.innerHeight;
+
+      // Não sobrepor o container (central), calcula a área disponível
+      // (simples: só evita o topo alto demais)
+      let minY = padding;
+      let maxY = windowHeight - btnHeight - padding;
+      let minX = padding;
+      let maxX = windowWidth - btnWidth - padding;
+
+      // Garante que não fique cobrindo o botão "Sim!" (central), se possível
+      const yesBtn = document.getElementById('yesBtn');
+      const yesRect = yesBtn.getBoundingClientRect();
+      let tries = 0, posX, posY;
+      do {
+        posX = Math.floor(Math.random() * (maxX - minX) + minX);
+        posY = Math.floor(Math.random() * (maxY - minY) + minY);
+        tries++;
+      } while (
+        tries < 30 &&
+        posX + btnWidth > yesRect.left - 15 && posX < yesRect.right + 15 &&
+        posY + btnHeight > yesRect.top - 15 && posY < yesRect.bottom + 15
+      );
+
+      noBtn.style.left = posX + 'px';
+      noBtn.style.top = posY + 'px';
+
+      // Cor divertida!
+      const colors = ['#e63946', '#ffa751', '#f85900', '#a259ff', '#70e000', '#25d366'];
+      noBtn.style.background = colors[(noBtnClicks)%colors.length];
+    }
+
+    noBtn.addEventListener('mouseenter', randomPosition);
+    noBtn.addEventListener('touchstart', randomPosition); // Para mobile
+    noBtn.addEventListener('click', function(e){
+      e.preventDefault();
+      noBtnClicks++;
+      randomPosition();
+    });
+
+    // Inicializa posição ao carregar
+    window.onload = randomPosition;
+    window.onresize = randomPosition;
+  </script>
+</body>
+</html>
